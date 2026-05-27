@@ -18,6 +18,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EmailService emailService;
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -96,9 +99,11 @@ public class UserService {
         user.setOtpExpiry(java.time.LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
 
-        System.out.println("\n==================================================");
-        System.out.printf("[MAIL MOCK] OTP for %s: %s\n", user.getEmail(), generatedOtp);
-        System.out.println("==================================================\n");
+        emailService.sendEmail(
+            user.getEmail(),
+            "FitNexus Account Verification - OTP",
+            "Welcome to FitNexus!\n\nYour One-Time Password (OTP) for account verification is: " + generatedOtp + "\n\nThis OTP will expire in 5 minutes."
+        );
     }
 
     @Transactional
@@ -112,9 +117,11 @@ public class UserService {
                 user.setOtpExpiry(java.time.LocalDateTime.now().plusMinutes(5));
                 userRepository.save(user);
 
-                System.out.println("\n==================================================");
-                System.out.printf("[MAIL MOCK] OTP for %s: %s\n", email, generatedOtp);
-                System.out.println("==================================================\n");
+                emailService.sendEmail(
+                    email,
+                    "FitNexus Login - OTP",
+                    "Hello,\n\nYour One-Time Password (OTP) for logging into FitNexus is: " + generatedOtp + "\n\nThis OTP will expire in 5 minutes."
+                );
                 return user;
             }
         }
@@ -146,9 +153,11 @@ public class UserService {
             user.setResetCodeExpiry(java.time.LocalDateTime.now().plusMinutes(15));
             userRepository.save(user);
 
-            System.out.println("\n==================================================");
-            System.out.printf("[MAIL MOCK] Password Reset Code for %s: %s\n", email, code);
-            System.out.println("==================================================\n");
+            emailService.sendEmail(
+                email,
+                "FitNexus Password Reset Code",
+                "Hello,\n\nYou requested a password reset for your FitNexus account. Your password reset code is: " + code + "\n\nThis code will expire in 15 minutes."
+            );
             return true;
         }
         return false;
