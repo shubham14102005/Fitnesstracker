@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@SuppressWarnings("null")
 public class MealService {
     @Autowired
     private MealRepository mealRepository;
@@ -33,6 +34,9 @@ public class MealService {
             Meal existingMeal = existingMealOpt.get();
             existingMeal.setName(updatedMeal.getName());
             existingMeal.setCalories(updatedMeal.getCalories());
+            existingMeal.setDate(updatedMeal.getDate());
+            existingMeal.setUser(updatedMeal.getUser());
+            existingMeal.setAssignedBy(updatedMeal.getAssignedBy());
             return mealRepository.save(existingMeal);
         }
         return null;

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@SuppressWarnings("null")
 public class GoalService {
     @Autowired
     private GoalRepository goalRepository;
@@ -32,6 +33,9 @@ public class GoalService {
         if (existingGoalOpt.isPresent()) {
             Goal existingGoal = existingGoalOpt.get();
             existingGoal.setTargetWeight(updatedGoal.getTargetWeight());
+            existingGoal.setTargetCalories(updatedGoal.getTargetCalories());
+            existingGoal.setDeadline(updatedGoal.getDeadline());
+            existingGoal.setUser(updatedGoal.getUser());
             return goalRepository.save(existingGoal);
         }
         return null;

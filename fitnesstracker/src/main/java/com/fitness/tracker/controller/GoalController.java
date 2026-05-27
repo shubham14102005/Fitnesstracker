@@ -2,7 +2,10 @@ package com.fitness.tracker.controller;
 
 import com.fitness.tracker.model.Goal;
 import com.fitness.tracker.service.GoalService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -13,27 +16,36 @@ public class GoalController {
     private GoalService goalService;
 
     @GetMapping
-    public List<Goal> getAllGoals() {
-        return goalService.getAllGoals();
+    public ResponseEntity<List<Goal>> getAllGoals() {
+        return ResponseEntity.ok(goalService.getAllGoals());
     }
 
     @GetMapping("/{id}")
-    public Goal getGoalById(@PathVariable Long id) {
-        return goalService.getGoalById(id);
+    public ResponseEntity<Goal> getGoalById(@PathVariable Long id) {
+        Goal goal = goalService.getGoalById(id);
+        if (goal == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(goal);
     }
 
     @PostMapping
-    public Goal createGoal(@RequestBody Goal goal) {
-        return goalService.createGoal(goal);
+    public ResponseEntity<Goal> createGoal(@Valid @RequestBody Goal goal) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(goalService.createGoal(goal));
     }
 
     @PutMapping("/{id}")
-    public Goal updateGoal(@PathVariable Long id, @RequestBody Goal updatedGoal) {
-        return goalService.updateGoal(id, updatedGoal);
+    public ResponseEntity<Goal> updateGoal(@PathVariable Long id, @Valid @RequestBody Goal updatedGoal) {
+        Goal goal = goalService.updateGoal(id, updatedGoal);
+        if (goal == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(goal);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteGoal(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteGoal(@PathVariable Long id) {
         goalService.deleteGoal(id);
+        return ResponseEntity.noContent().build();
     }
 }

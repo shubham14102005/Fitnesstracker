@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@SuppressWarnings("null")
 public class WorkoutService {
     @Autowired
     private WorkoutRepository workoutRepository;
@@ -31,8 +32,12 @@ public class WorkoutService {
         Optional<Workout> existingWorkoutOpt = workoutRepository.findById(id);
         if (existingWorkoutOpt.isPresent()) {
             Workout existingWorkout = existingWorkoutOpt.get();
+            existingWorkout.setType(updatedWorkout.getType());
             existingWorkout.setDuration(updatedWorkout.getDuration());
             existingWorkout.setCaloriesBurned(updatedWorkout.getCaloriesBurned());
+            existingWorkout.setUser(updatedWorkout.getUser());
+            existingWorkout.setAssignedBy(updatedWorkout.getAssignedBy());
+            existingWorkout.setDate(updatedWorkout.getDate());
             return workoutRepository.save(existingWorkout);
         }
         return null;

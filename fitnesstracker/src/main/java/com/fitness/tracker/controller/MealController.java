@@ -2,7 +2,10 @@ package com.fitness.tracker.controller;
 
 import com.fitness.tracker.model.Meal;
 import com.fitness.tracker.service.MealService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -13,27 +16,36 @@ public class MealController {
     private MealService mealService;
 
     @GetMapping
-    public List<Meal> getAllMeals() {
-        return mealService.getAllMeals();
+    public ResponseEntity<List<Meal>> getAllMeals() {
+        return ResponseEntity.ok(mealService.getAllMeals());
     }
 
     @GetMapping("/{id}")
-    public Meal getMealById(@PathVariable Long id) {
-        return mealService.getMealById(id);
+    public ResponseEntity<Meal> getMealById(@PathVariable Long id) {
+        Meal meal = mealService.getMealById(id);
+        if (meal == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(meal);
     }
 
     @PostMapping
-    public Meal createMeal(@RequestBody Meal meal) {
-        return mealService.createMeal(meal);
+    public ResponseEntity<Meal> createMeal(@Valid @RequestBody Meal meal) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(mealService.createMeal(meal));
     }
 
     @PutMapping("/{id}")
-    public Meal updateMeal(@PathVariable Long id, @RequestBody Meal updatedMeal) {
-        return mealService.updateMeal(id, updatedMeal);
+    public ResponseEntity<Meal> updateMeal(@PathVariable Long id, @Valid @RequestBody Meal updatedMeal) {
+        Meal meal = mealService.updateMeal(id, updatedMeal);
+        if (meal == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(meal);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteMeal(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMeal(@PathVariable Long id) {
         mealService.deleteMeal(id);
+        return ResponseEntity.noContent().build();
     }
 }

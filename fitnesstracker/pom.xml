@@ -52,6 +52,19 @@
     <scope>runtime</scope>
 </dependency>
 
+    <!-- H2 Database (kept for local dev fallback) -->
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+
+    <!-- PostgreSQL Driver (for Neon.tech production database) -->
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <scope>runtime</scope>
+    </dependency>
 
     <!-- Lombok (to reduce boilerplate code) -->
     <dependency>
@@ -71,6 +84,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <scope>test</scope>
+    </dependency>
+
+    <!-- SpringDoc OpenAPI (Swagger 3) for API Documentation -->
+    <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.0.2</version>
     </dependency>
 </dependencies>
 

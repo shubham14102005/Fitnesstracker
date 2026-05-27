@@ -2,7 +2,10 @@ package com.fitness.tracker.controller;
 
 import com.fitness.tracker.model.Workout;
 import com.fitness.tracker.service.WorkoutService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -13,27 +16,36 @@ public class WorkoutController {
     private WorkoutService workoutService;
 
     @GetMapping
-    public List<Workout> getAllWorkouts() {
-        return workoutService.getAllWorkouts();
+    public ResponseEntity<List<Workout>> getAllWorkouts() {
+        return ResponseEntity.ok(workoutService.getAllWorkouts());
     }
 
     @GetMapping("/{id}")
-    public Workout getWorkoutById(@PathVariable Long id) {
-        return workoutService.getWorkoutById(id);
+    public ResponseEntity<Workout> getWorkoutById(@PathVariable Long id) {
+        Workout workout = workoutService.getWorkoutById(id);
+        if (workout == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(workout);
     }
 
     @PostMapping
-    public Workout createWorkout(@RequestBody Workout workout) {
-        return workoutService.createWorkout(workout);
+    public ResponseEntity<Workout> createWorkout(@Valid @RequestBody Workout workout) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(workoutService.createWorkout(workout));
     }
 
     @PutMapping("/{id}")
-    public Workout updateWorkout(@PathVariable Long id, @RequestBody Workout updatedWorkout) {
-        return workoutService.updateWorkout(id, updatedWorkout);
+    public ResponseEntity<Workout> updateWorkout(@PathVariable Long id, @Valid @RequestBody Workout updatedWorkout) {
+        Workout workout = workoutService.updateWorkout(id, updatedWorkout);
+        if (workout == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(workout);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteWorkout(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteWorkout(@PathVariable Long id) {
         workoutService.deleteWorkout(id);
+        return ResponseEntity.noContent().build();
     }
 }	

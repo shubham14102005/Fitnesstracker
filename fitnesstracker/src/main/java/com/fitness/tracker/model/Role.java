@@ -1,9 +1,9 @@
 package com.fitness.tracker.model;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "roles")
@@ -13,12 +13,13 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;  
 
+    @NotBlank(message = "Role name is required")
     @Column(name = "role_name")
     private String roleName;
     
     
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnoreProperties({"workouts", "meals", "r", "goal"})
     private User user;
 
     public Role() {

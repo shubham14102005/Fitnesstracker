@@ -1,0 +1,10 @@
+{
+  "name": "fitnesstracker-root",
+  "version": "1.0.0",
+  "description": "Fitness Tracker Workspace Runner",
+  "scripts": {
+    "frontend": "npm.cmd run dev --prefix frontend",
+    "backend": ".maven\\\\apache-maven-3.9.6\\\\bin\\\\mvn.cmd -f fitnesstracker/pom.xml spring-boot:run",
+    "start": "npx.cmd concurrently --kill-others \"npm.cmd run backend\" \"npm.cmd run frontend\""
+  }
+}

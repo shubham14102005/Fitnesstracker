@@ -1,0 +1,81 @@
+# ============================================================
+# FitNexus - Fitness Tracker .gitignore
+# ============================================================
+
+# ─── Java / Spring Boot (Backend) ───────────────────────────
+fitnesstracker/target/
+fitnesstracker/*.jar
+fitnesstracker/*.war
+fitnesstracker/*.class
+
+# Bundled Maven binary (too large for Git — install Maven separately)
+.maven/
+
+# H2 local database files (replaced by Neon PostgreSQL)
+fitnesstracker/fitnessdb.mv.db
+fitnesstracker/fitnessdb.trace.db
+*.mv.db
+*.trace.db
+
+# Maven wrapper download cache
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot log files
+*.log
+fitnesstracker/logs/
+
+# ─── React / Vite (Frontend) ────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Root-level node_modules (concurrently runner)
+node_modules/
+
+# Vite cache
+frontend/.vite/
+
+# ─── Environment & Secrets ──────────────────────────────────
+# IMPORTANT: Never commit real credentials
+.env
+.env.local
+.env.production
+*.env
+
+# ─── IDE / Editor Files ─────────────────────────────────────
+.idea/
+.idea/**
+*.iml
+*.ipr
+*.iws
+.eclipse/
+.settings/
+.classpath
+.project
+
+# VS Code — personal editor settings, not project-specific
+.vscode/
+
+# ─── OS Generated Files ─────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── Testing & Coverage ─────────────────────────────────────
+fitnesstracker/test-output/
+coverage/
+*.lcov
+
+# ─── Miscellaneous ──────────────────────────────────────────
+# Temporary files
+*.tmp
+*.swp
+*.bak
+~$*

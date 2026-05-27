@@ -8,6 +8,7 @@
 	import java.util.Optional;
 	
 	@Service
+	@SuppressWarnings("null")
 	public class RoleService {
 	
 	    @Autowired

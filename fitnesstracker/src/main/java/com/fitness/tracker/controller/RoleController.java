@@ -2,7 +2,9 @@ package com.fitness.tracker.controller;
 
 import com.fitness.tracker.model.Role;
 import com.fitness.tracker.service.RoleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +19,8 @@ public class RoleController {
     private RoleService roleService;
 
     @GetMapping
-    public List<Role> getAllRoles() {
-        return roleService.getAllRoles();
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return ResponseEntity.ok(roleService.getAllRoles());
     }
 
     @GetMapping("/{id}")
@@ -32,8 +34,19 @@ public class RoleController {
     }
 
     @PostMapping
-    public Role createRole(@RequestBody Role role) {
-        return roleService.saveRole(role);
+    public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(roleService.saveRole(role));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Role> updateRole(@PathVariable Long id, @Valid @RequestBody Role roleDetails) {
+        Optional<Role> existing = roleService.getRoleById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Role role = existing.get();
+        role.setRoleName(roleDetails.getRoleName());
+        return ResponseEntity.ok(roleService.saveRole(role));
     }
 
     @DeleteMapping("/{id}")

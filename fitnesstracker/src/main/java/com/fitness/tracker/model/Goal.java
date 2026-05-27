@@ -1,19 +1,32 @@
 package com.fitness.tracker.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import java.time.LocalDate;
 
 @Entity
 public class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @NotNull(message = "Target weight is required")
+    @Positive(message = "Target weight must be positive")
     private double targetWeight;
+    
+    @NotNull(message = "Target calories is required")
+    @Positive(message = "Target calories must be positive")
     private int targetCalories;
-    private String deadline;
+    
+    @NotNull(message = "Deadline is required")
+    private LocalDate deadline;
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"workouts", "meals", "r", "goal"})
     private User user;
 
 	public Long getId() {
@@ -40,11 +53,11 @@ public class Goal {
 		this.targetCalories = targetCalories;
 	}
 
-	public String getDeadline() {
+	public LocalDate getDeadline() {
 		return deadline;
 	}
 
-	public void setDeadline(String deadline) {
+	public void setDeadline(LocalDate deadline) {
 		this.deadline = deadline;
 	}
 
