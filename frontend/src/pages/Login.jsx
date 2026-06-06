@@ -216,7 +216,7 @@ export default function Login({ activeUser, onLoginSuccess }) {
         <form onSubmit={handleSendOtp} className="space-y-5">
           <div>
             <h2 className="text-xl font-black uppercase text-white">Sign In</h2>
-            <p className="text-slate-400 text-xs mt-1">Enter your details to generate a login verification code.</p>
+            <p className="text-slate-400 text-xs mt-1">Enter your email and password to sign in.</p>
           </div>
 
           <div>
@@ -292,10 +292,10 @@ export default function Login({ activeUser, onLoginSuccess }) {
             {loading ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                Generating OTP...
+                Signing in...
               </>
             ) : (
-              'Request Verification Code'
+              'Sign In'
             )}
           </button>
 

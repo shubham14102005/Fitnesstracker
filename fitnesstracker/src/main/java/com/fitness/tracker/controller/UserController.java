@@ -47,8 +47,7 @@ public class UserController {
         if (isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(java.util.Map.of("message", "Administrators must login via the Admin Portal."));
         } else {
-            userService.generateAndSendOtpForUser(user);
-            return ResponseEntity.ok(java.util.Map.of("otpRequired", true, "email", loginRequest.getEmail(), "message", "OTP sent successfully"));
+            return ResponseEntity.ok(java.util.Map.of("otpRequired", false, "user", user));
         }
     }
 

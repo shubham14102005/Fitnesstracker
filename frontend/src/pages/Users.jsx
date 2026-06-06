@@ -25,10 +25,11 @@ export default function Users({ activeUser, onUsersChange, users }) {
   // ── Create user + assign role ──────────────────────────────────────
   const handleCreate = async (userData, role) => {
     try {
-      const res = await createUser(userData)
-      const newUser = res.data
-      // Assign role right after creation
-      await createRole({ roleName: role, user: { id: newUser.id } })
+      // Pass the role directly in the User payload's 'r' field
+      await createUser({
+        ...userData,
+        r: [{ roleName: role }]
+      })
       setShowModal(false)
       if (onUsersChange) onUsersChange()
     } catch (err) {
