@@ -47,7 +47,7 @@ public class UserController {
         if (isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(java.util.Map.of("message", "Administrators must login via the Admin Portal."));
         } else {
-            return ResponseEntity.ok(java.util.Map.of("otpRequired", false, "user", user));
+            return ResponseEntity.ok(user);
         }
     }
 

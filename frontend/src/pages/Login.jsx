@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { sendLoginOtp, verifyLoginOtp, requestPasswordReset, resetPassword, adminLogin } from '../api'
+import { sendLoginOtp, requestPasswordReset, resetPassword, adminLogin } from '../api'
 
 export default function Login({ activeUser, onLoginSuccess }) {
-  const [mode, setMode] = useState('CREDENTIALS') // CREDENTIALS | OTP | FORGOT_REQ | FORGOT_RESET
+  const [mode, setMode] = useState('CREDENTIALS') // CREDENTIALS | FORGOT_REQ | FORGOT_RESET
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [otp, setOtp] = useState('')
   const [resetCode, setResetCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -15,7 +14,6 @@ export default function Login({ activeUser, onLoginSuccess }) {
   const [validationError, setValidationError] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
   
-  const [otpTimer, setOtpTimer] = useState(300) // 5 minutes in seconds
   const [showPassword, setShowPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -28,18 +26,7 @@ export default function Login({ activeUser, onLoginSuccess }) {
     }
   }, [activeUser, navigate])
 
-  // OTP Countdown timer
-  useEffect(() => {
-    let interval = null
-    if (mode === 'OTP' && otpTimer > 0) {
-      interval = setInterval(() => {
-        setOtpTimer((prev) => prev - 1)
-      }, 1000)
-    } else if (otpTimer === 0) {
-      setError('OTP has expired. Please request a new one.')
-    }
-    return () => clearInterval(interval)
-  }, [mode, otpTimer])
+
 
   // Error handler to distinguish between network/system errors and bad credentials/parameters
   const handleApiError = (err, defaultMsg) => {
@@ -68,15 +55,8 @@ export default function Login({ activeUser, onLoginSuccess }) {
     setSuccessMessage(null)
     try {
       const res = await sendLoginOtp({ email, password })
-      if (res.data.otpRequired === false) {
-        // Direct login for admin
-        onLoginSuccess(res.data.user)
-        navigate('/')
-      } else {
-        // Requires OTP for trainers and users
-        setOtpTimer(300) // reset timer to 5 minutes
-        setMode('OTP')
-      }
+      onLoginSuccess(res.data)
+      navigate('/')
     } catch (err) {
       handleApiError(err, 'Invalid email or password. Please try again.')
     } finally {
@@ -101,25 +81,7 @@ export default function Login({ activeUser, onLoginSuccess }) {
     }
   }
 
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault()
-    if (otpTimer === 0) {
-      setValidationError('OTP expired. Please go back and request a new one.')
-      return
-    }
-    setLoading(true)
-    setError(null)
-    setValidationError(null)
-    try {
-      const res = await verifyLoginOtp({ email, otp })
-      onLoginSuccess(res.data)
-      navigate('/')
-    } catch (err) {
-      handleApiError(err, 'Invalid OTP verification code. Please check and try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
+
 
   const handleForgotRequest = async (e) => {
     e.preventDefault()
@@ -311,72 +273,7 @@ export default function Login({ activeUser, onLoginSuccess }) {
         </form>
       )}
 
-      {/* ================================================== */}
-      {/* MODE: OTP */}
-      {/* ================================================== */}
-      {mode === 'OTP' && (
-        <form onSubmit={handleVerifyOtp} className="space-y-5">
-          <div>
-            <h2 className="text-xl font-black uppercase text-white">Verification Code</h2>
-            <p className="text-slate-400 text-xs mt-1">We sent a 6-digit OTP code to <strong className="text-slate-200">{email}</strong>.</p>
-          </div>
 
-          <div>
-            <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
-              Enter 6-digit OTP
-            </label>
-            <input
-              type="text"
-              required
-              maxLength="6"
-              pattern="\d{6}"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="e.g. 123456"
-              className="w-full glass-input rounded-xl px-4 py-3 text-center tracking-[0.7em] text-lg font-bold focus:outline-none"
-            />
-          </div>
-
-          <div className="text-center text-xs">
-            {otpTimer > 0 ? (
-              <p className="text-slate-400 font-medium">
-                Code expires in: <span className="text-[#ed563b] font-bold">{formatTime(otpTimer)}</span>
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSendOtp}
-                className="text-[#ed563b] hover:text-[#ff684d] font-bold underline transition"
-              >
-                Resend Verification OTP
-              </button>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 rounded-xl font-black uppercase tracking-wider bg-[#ed563b] hover:bg-[#ff684d] text-white shadow-lg shadow-orange-950/20 transition duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-          >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                Verifying...
-              </>
-            ) : (
-              'Verify & Login'
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setMode('CREDENTIALS'); setError(null); setSuccessMessage(null); setOtp(''); }}
-            className="w-full text-center text-xs font-bold text-slate-400 hover:text-slate-200 transition"
-          >
-            ← Back to Sign In
-          </button>
-        </form>
-      )}
 
       {/* ================================================== */}
       {/* MODE: FORGOT_REQ */}
