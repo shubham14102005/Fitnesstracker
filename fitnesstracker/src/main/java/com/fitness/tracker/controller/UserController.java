@@ -34,8 +34,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 
-    @PostMapping("/login/otp-send")
-    public ResponseEntity<?> sendLoginOtp(@RequestBody LoginRequest loginRequest) {
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         User user = userService.validateCredentials(loginRequest.getEmail(), loginRequest.getPassword());
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Map.of("message", "Invalid email or password"));
@@ -68,32 +68,8 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/login/otp-verify")
-    public ResponseEntity<?> verifyLoginOtp(@RequestBody OtpVerifyRequest verifyRequest) {
-        User user = userService.verifyOtp(verifyRequest.getEmail(), verifyRequest.getOtp());
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Map.of("message", "Invalid or expired OTP"));
-        }
-        return ResponseEntity.ok(user);
-    }
 
-    @PostMapping("/forgot-password/request")
-    public ResponseEntity<?> requestPasswordReset(@RequestBody ForgotPasswordRequest request) {
-        boolean success = userService.generatePasswordResetCode(request.getEmail());
-        if (!success) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(java.util.Map.of("message", "Email not registered"));
-        }
-        return ResponseEntity.ok(java.util.Map.of("email", request.getEmail(), "message", "Reset code generated successfully"));
-    }
 
-    @PostMapping("/forgot-password/reset")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
-        boolean success = userService.resetPasswordWithCode(request.getEmail(), request.getCode(), request.getNewPassword());
-        if (!success) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("message", "Invalid or expired recovery code"));
-        }
-        return ResponseEntity.ok(java.util.Map.of("message", "Password reset successfully"));
-    }
 
     public static class LoginRequest {
         private String email;
@@ -102,33 +78,6 @@ public class UserController {
         public void setEmail(String email) { this.email = email; }
         public String getPassword() { return password; }
         public void setPassword(String password) { this.password = password; }
-    }
-
-    public static class OtpVerifyRequest {
-        private String email;
-        private String otp;
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getOtp() { return otp; }
-        public void setOtp(String otp) { this.otp = otp; }
-    }
-
-    public static class ForgotPasswordRequest {
-        private String email;
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-    }
-
-    public static class ResetPasswordRequest {
-        private String email;
-        private String code;
-        private String newPassword;
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getCode() { return code; }
-        public void setCode(String code) { this.code = code; }
-        public String getNewPassword() { return newPassword; }
-        public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
     }
 
     @PutMapping("/{id}")

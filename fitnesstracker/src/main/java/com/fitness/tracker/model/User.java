@@ -37,11 +37,6 @@ public class User {
     
     @Column(nullable = false)
     private boolean enabled;
-
-    private String otp;
-    private java.time.LocalDateTime otpExpiry;
-    private String resetCode;
-    private java.time.LocalDateTime resetCodeExpiry;
  	
     public boolean isEnabled() {
 		return enabled;
@@ -50,17 +45,6 @@ public class User {
 		this.enabled = enabled;
 	}
 
-    public String getOtp() { return otp; }
-    public void setOtp(String otp) { this.otp = otp; }
-
-    public java.time.LocalDateTime getOtpExpiry() { return otpExpiry; }
-    public void setOtpExpiry(java.time.LocalDateTime otpExpiry) { this.otpExpiry = otpExpiry; }
-
-    public String getResetCode() { return resetCode; }
-    public void setResetCode(String resetCode) { this.resetCode = resetCode; }
-
-    public java.time.LocalDateTime getResetCodeExpiry() { return resetCodeExpiry; }
-    public void setResetCodeExpiry(java.time.LocalDateTime resetCodeExpiry) { this.resetCodeExpiry = resetCodeExpiry; }
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties("user")
     private List<Workout> workouts;
